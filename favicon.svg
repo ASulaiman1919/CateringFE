@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Degi Kitchen">
+  <rect width="64" height="64" rx="32" fill="#15120f"/>
+  <circle cx="32" cy="32" r="25" fill="none" stroke="#c4882c" stroke-width="2"/>
+  <text x="32" y="39" text-anchor="middle" font-family="Georgia, serif" font-size="20" font-weight="700" fill="#fffaf2">DK</text>
+</svg>
