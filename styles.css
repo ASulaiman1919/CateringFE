@@ -254,15 +254,16 @@ textarea {
 h1,
 h2,
 h3,
+h4,
 p {
   overflow-wrap: anywhere;
 }
 
 h1,
 h2,
-h3 {
+h3,
+h4 {
   margin: 0;
-  line-height: 0.98;
   letter-spacing: 0;
 }
 
@@ -270,6 +271,7 @@ h1,
 h2 {
   font-family: Georgia, "Times New Roman", serif;
   font-weight: 700;
+  line-height: 0.98;
 }
 
 h1 {
@@ -283,6 +285,13 @@ h2 {
 h3 {
   font-family: Georgia, "Times New Roman", serif;
   font-size: 1.35rem;
+  line-height: 1;
+}
+
+h4 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.3rem;
+  line-height: 1.08;
 }
 
 .hero-lede {
@@ -412,67 +421,98 @@ h3 {
   margin-bottom: 1rem;
 }
 
-.dish-grid {
+.menu-section {
+  background: linear-gradient(180deg, var(--paper) 0%, #fff6ea 100%);
+}
+
+.menu-category-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: -0.5rem 0 2.5rem;
+}
+
+.menu-category-nav a {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.55rem 0.78rem;
+  background: rgba(255, 255, 255, 0.68);
+  color: #54473b;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.menu-category-nav a:hover,
+.menu-category-nav a:focus-visible {
+  border-color: rgba(150, 53, 40, 0.34);
+  color: var(--pomegranate);
+}
+
+.menu-categories {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(3rem, 6vw, 5rem);
+}
+
+.menu-category {
+  scroll-margin-top: calc(var(--header-h) + 1.25rem);
+  border-top: 1px solid var(--line);
+  padding-top: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.menu-category-heading {
+  display: grid;
+  gap: 0.25rem;
+  margin-bottom: 1.2rem;
+}
+
+.menu-category-heading h3 {
+  font-size: clamp(1.9rem, 4.2vw, 3.8rem);
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
   gap: 1rem;
 }
 
-.dish-card {
+.menu-card {
+  min-width: 0;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--white);
   box-shadow: 0 16px 46px rgba(24, 18, 12, 0.08);
 }
 
-.dish-card img {
+.menu-card img {
   width: 100%;
   aspect-ratio: 1 / 0.78;
   object-fit: cover;
+  background: var(--linen);
 }
 
-.dish-card div {
-  padding: 1.15rem;
+.menu-card-copy {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 0.5rem;
+  flex: 1;
+  padding: 1.1rem;
 }
 
-.dish-card h3 {
-  margin-bottom: 0.65rem;
-}
-
-.dish-card p {
+.menu-card p {
   margin: 0;
   color: var(--muted);
 }
 
-.dish-card .card-kicker {
-  margin-bottom: 0.45rem;
+.card-kicker {
   color: var(--pomegranate);
-  font-size: 0.74rem;
+  font-size: 0.73rem;
   font-weight: 900;
   letter-spacing: 0.12em;
+  line-height: 1.2;
   text-transform: uppercase;
-}
-
-.feature-card {
-  grid-column: span 1;
-}
-
-.menu-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-  margin-top: 1.5rem;
-}
-
-.menu-list span {
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 0.55rem 0.78rem;
-  background: rgba(255, 255, 255, 0.56);
-  color: #54473b;
-  font-size: 0.9rem;
-  font-weight: 800;
 }
 
 .catering-grid {
@@ -819,20 +859,6 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 
-  .dish-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .dish-card {
-    display: grid;
-    grid-template-columns: minmax(160px, 0.75fr) minmax(0, 1fr);
-  }
-
-  .dish-card img {
-    height: 100%;
-    aspect-ratio: auto;
-  }
-
   .footer-grid {
     grid-template-columns: 1fr;
   }
@@ -903,14 +929,6 @@ textarea:focus {
 
   h2 {
     font-size: clamp(2.1rem, 13vw, 3.65rem);
-  }
-
-  .dish-card {
-    display: block;
-  }
-
-  .dish-card img {
-    aspect-ratio: 1 / 0.72;
   }
 
   .occasion-grid,

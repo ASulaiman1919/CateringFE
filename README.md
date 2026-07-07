@@ -98,25 +98,25 @@ Replace the example links with your real Instagram, Facebook, or TikTok links.
 In `index.html`, search for:
 
 ```text
-Afghan Catering Favorites
+menu-category
 ```
 
-The main dish cards are below that heading. You can edit dish names, descriptions,
-and image file names there.
+Each category has individual menu cards. You can edit dish names, descriptions,
+category labels, and image file names there.
 
 ### Replace Food Photos
 
-1. Add the new photo to the `assets/` folder.
+1. Add the new photo to the `assets/menu/` folder.
 2. In `index.html`, change the matching image path, for example:
 
 ```html
-<img src="assets/qabuli-lamb.jpg" alt="Qabuli palaw with lamb, carrots, raisins, almonds, and pistachios">
+<img src="assets/menu/mantoo.jpg" alt="Mantoo dumplings with yogurt, tomato sauce, chickpeas, and herbs">
 ```
 
 Keep image names simple, like:
 
 ```text
-new-qabuli-photo.jpg
+new-mantoo-photo.jpg
 ```
 
 ### Change Colors
