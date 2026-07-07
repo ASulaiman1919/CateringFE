@@ -2,10 +2,10 @@ const header = document.querySelector("[data-header]");
 const navToggle = document.querySelector("[data-nav-toggle]");
 const nav = document.querySelector("[data-nav]");
 const form = document.querySelector("[data-inquiry-form]");
-const smsLink = document.querySelector("[data-sms-link]");
+const emailLink = document.querySelector("[data-email-link]");
 const formNote = document.querySelector("[data-form-note]");
 
-const phoneNumber = "+15736395967";
+const orderEmail = "order@degikitchen.com";
 
 function updateHeaderState() {
   if (!header) return;
@@ -28,7 +28,7 @@ function toggleNav() {
   document.body.classList.toggle("nav-open", isOpen);
 }
 
-function buildSmsBody() {
+function buildEmailBody() {
   if (!form) return "Hello Degi Kitchen, I would like to request catering.";
 
   const data = new FormData(form);
@@ -45,14 +45,15 @@ function buildSmsBody() {
   return lines.join("\n").trim();
 }
 
-function updateSmsLink() {
-  if (!smsLink) return;
-  smsLink.href = `sms:${phoneNumber}?body=${encodeURIComponent(buildSmsBody())}`;
+function updateEmailLink() {
+  if (!emailLink) return;
+  const subject = "Degi Kitchen Catering Request";
+  emailLink.href = `mailto:${orderEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(buildEmailBody())}`;
 }
 
 window.addEventListener("scroll", updateHeaderState, { passive: true });
 updateHeaderState();
-updateSmsLink();
+updateEmailLink();
 
 if (navToggle) {
   navToggle.addEventListener("click", toggleNav);
@@ -65,12 +66,12 @@ if (nav) {
 }
 
 if (form) {
-  form.addEventListener("input", updateSmsLink);
+  form.addEventListener("input", updateEmailLink);
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    updateSmsLink();
+    updateEmailLink();
     if (formNote) {
-      formNote.textContent = "Your text message is ready. Use the button above to send it.";
+      formNote.textContent = "Your email is ready. Use the button above to send it.";
     }
   });
 }

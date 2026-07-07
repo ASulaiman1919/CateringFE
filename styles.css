@@ -735,6 +735,16 @@ textarea:focus {
   font-weight: 900;
 }
 
+.footer-contact-links {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.footer-contact-links a,
+.contact-method strong {
+  overflow-wrap: anywhere;
+}
+
 .social-placeholders {
   display: flex;
   gap: 0.55rem;

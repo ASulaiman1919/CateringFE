@@ -71,11 +71,17 @@ Also search for the phone link format:
 +15736395967
 ```
 
-In `script.js`, change:
+The phone number is currently only used in `index.html`.
 
-```js
-const phoneNumber = "+15736395967";
+### Change The Order Email
+
+In `index.html` and `script.js`, search for:
+
+```text
+order@degikitchen.com
 ```
+
+Replace each match with the new order email address.
 
 ### Add Social Media Links
 
