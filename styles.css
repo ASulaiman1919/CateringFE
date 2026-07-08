@@ -689,12 +689,6 @@ h4 {
   gap: 0.45rem;
 }
 
-.form-split {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-}
-
 label {
   color: #3f352b;
   font-size: 0.82rem;
@@ -931,8 +925,7 @@ textarea:focus {
     font-size: clamp(2.1rem, 13vw, 3.65rem);
   }
 
-  .occasion-grid,
-  .form-split {
+  .occasion-grid {
     grid-template-columns: 1fr;
   }
 
