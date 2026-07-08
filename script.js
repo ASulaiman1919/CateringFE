@@ -38,6 +38,7 @@ function buildEmailBody() {
     `Name: ${data.get("name") || ""}`,
     `Occasion: ${data.get("event") || ""}`,
     `Date: ${data.get("date") || ""}`,
+    `Needed by: ${data.get("time") || ""}`,
     `Guests: ${data.get("guests") || ""}`,
     `Dishes or notes: ${data.get("message") || ""}`
   ];
