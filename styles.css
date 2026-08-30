@@ -617,6 +617,17 @@ h4 {
   background: var(--linen);
 }
 
+.menu-card-text-only {
+  background:
+    linear-gradient(135deg, rgba(196, 136, 44, 0.14), transparent 44%),
+    linear-gradient(180deg, var(--white) 0%, var(--cream) 100%);
+}
+
+.menu-card-text-only .menu-card-copy {
+  min-height: 17.4rem;
+  align-content: end;
+}
+
 .menu-card-copy {
   display: grid;
   grid-template-rows: auto auto 1fr;
@@ -628,6 +639,32 @@ h4 {
 .menu-card p {
   margin: 0;
   color: var(--muted);
+}
+
+.menu-card-points {
+  display: grid;
+  gap: 0.38rem;
+  margin: 0.45rem 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.menu-card-points li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.menu-card-points li::before {
+  content: "";
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 999px;
+  background: var(--saffron);
+  flex: 0 0 auto;
 }
 
 .card-kicker {
