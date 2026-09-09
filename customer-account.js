@@ -125,7 +125,14 @@ async function applyUser(user) {
 function openAccount() {
   lastOpener = document.activeElement;
   if (!dialog.open) dialog.showModal();
-  if (currentUser) refreshHistory();
+  if (currentUser) {
+    find('[data-account-auth]').hidden = true;
+    find('[data-reset-form]').hidden = true;
+    find('[data-account-member]').hidden = false;
+    memberView('requests');
+    status.textContent = '';
+    refreshHistory();
+  }
 }
 document.querySelectorAll('[data-account-open]').forEach(button => button.addEventListener('click', openAccount));
 find('[data-account-close]').addEventListener('click', () => dialog.close());
