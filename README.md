@@ -8,9 +8,25 @@ the whole folder to your hosting service.
 
 - `index.html` - the website words, sections, menu items, phone number, footer, and social placeholders.
 - `styles.css` - colors, spacing, fonts, mobile layout, and overall design.
-- `script.js` - mobile menu behavior and the text-message request button.
-- `assets/` - food photos used on the website.
+- `script.js` - mobile navigation, menu categories, dish selection, and prepared email/text inquiries.
+- `assets/editorial/` - current illustrative food imagery, source notes, and generation prompts.
+- `assets/fonts/` and `assets/icons/` - self-hosted fonts and Lucide icons, including their licenses.
 - `favicon.svg` - the small browser tab icon.
+
+## September 2026 Redesign
+
+The site uses a modern Afghan palette of deep green, white, charcoal, and restrained red.
+All 30 dishes remain in the HTML. JavaScript adds category tabs and a selection list;
+without JavaScript, the complete menu remains available.
+
+The inquiry form prepares an email to `order@degikitchen.com`. It does not submit
+to a server or send automatically. The customer reviews and sends the draft in their
+email app. After preparing a request, text-message and copy options are also available.
+Phone and text links use separate actions. No payment is collected on the site.
+
+Food imagery is generated and disclosed in the footer's Image notes. Original PNGs
+remain in the owner's Codex folder; optimized WebP files are served from this project.
+See `assets/editorial/README.md` for source details and design references.
 
 ## Open In VS Code
 
