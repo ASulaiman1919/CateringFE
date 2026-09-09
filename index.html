@@ -19,8 +19,11 @@
     <link rel="preload" as="font" href="assets/fonts/dm-serif-display.ttf" type="font/ttf" crossorigin>
     <link rel="stylesheet" href="styles.css?v=20260909">
     <link rel="stylesheet" href="order-assistant.css?v=20260909">
-    <script src="script.js?v=20260909" defer></script>
-    <script src="order-assistant.js?v=20260909" defer></script>
+    <link rel="stylesheet" href="order-planner.css?v=20260909b">
+    <script src="script.js?v=20260909b" defer></script>
+    <script src="order-planner.js?v=20260909b" defer></script>
+    <script src="customer-account.js?v=20260909b" defer></script>
+    <script src="order-assistant.js?v=20260909b" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -37,7 +40,7 @@
         <a href="#area">Service Areas</a>
         <a class="nav-contact" href="#contact">Get in Touch</a>
       </nav>
-      <a class="header-contact" href="#contact">Get in Touch <span class="icon icon-arrow-up-right" aria-hidden="true"></span></a>
+      <div class="header-tools"><button class="icon-button" type="button" data-account-open aria-label="Sign in or create account" title="Sign in or create account"><span class="icon icon-user" aria-hidden="true"></span></button><button class="icon-button cart-header-button" type="button" data-cart-open aria-label="Your cart" title="Your cart"><span class="icon icon-bag" aria-hidden="true"></span><span class="cart-badge" data-cart-count hidden>0</span></button></div>
       <button class="nav-toggle icon-button" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation" data-nav-toggle><span class="icon icon-menu" aria-hidden="true"></span></button>
     </header>
 
@@ -194,34 +197,43 @@
       </section>
 
       <section class="contact section-space" id="contact" aria-labelledby="contact-title">
-        <div class="page-width contact-grid">
-          <div class="contact-copy"><p class="eyebrow">There's a place for you at our table</p><h2 id="contact-title">What are<br><em>you planning?</em></h2><p>A family order or your next event.<br>Let's start with the details.</p><a class="contact-email" href="mailto:order@degikitchen.com">order@degikitchen.com</a><p class="contact-phone">573-639-5967</p><div class="contact-links"><a href="tel:+15736395967"><span class="icon icon-phone" aria-hidden="true"></span> Call</a><a href="sms:+15736395967"><span class="icon icon-message-circle" aria-hidden="true"></span> Text</a></div></div>
-          <form class="inquiry-form" name="degi-inquiry" method="POST" action="/thank-you.html" data-netlify="true" netlify-honeypot="company-website" data-inquiry-form>
-            <input type="hidden" name="form-name" value="degi-inquiry">
-            <input type="hidden" name="subject" value="Degi Kitchen - New website inquiry">
-            <input type="hidden" name="menu-choices" value="">
-            <p hidden><label>Leave this field empty<input name="company-website" tabindex="-1" autocomplete="off"></label></p>
-            <fieldset class="request-type"><legend class="sr-only">Request type</legend><label><input type="radio" name="requestType" value="order" checked><span>Family Order</span></label><label><input type="radio" name="requestType" value="event"><span>Event Catering</span></label></fieldset>
-            <div class="form-grid">
-              <div class="form-field"><label for="name">Your name <span aria-hidden="true">*</span></label><input id="name" name="name" autocomplete="name" required maxlength="120"></div>
-              <div class="form-field"><label for="email">Email <span aria-hidden="true">*</span></label><input id="email" name="email" type="email" autocomplete="email" required maxlength="200"></div>
-              <div class="form-field"><label for="phone">Phone <span class="optional">(optional)</span></label><input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="40"></div>
-              <div class="form-field"><label for="event">Occasion</label><select id="event" name="event"><option value="">Select occasion</option><option>Family gathering</option><option>Office catering</option><option>Birthday</option><option>Wedding</option><option>Weekly meal prep</option><option>Other</option></select></div>
-              <div class="form-field"><label for="date">Date</label><input id="date" name="date" type="date"></div>
-              <div class="form-field"><label for="guests">Number of people</label><input id="guests" name="guests" type="number" min="1" step="1" inputmode="numeric" placeholder="Approximate count"></div>
-              <div class="form-field"><label for="location">City or event location</label><input id="location" name="location" autocomplete="address-level2" maxlength="200"></div>
-              <div class="form-field"><label for="time">Preferred time</label><input id="time" name="time" type="time"></div>
-              <div class="form-field field-full selected-dishes" data-selected-dishes hidden><span class="field-label">Your menu choices</span><ul data-selected-list></ul></div>
-              <div class="form-field field-full"><label for="message">Dishes, dietary needs, or other details</label><textarea id="message" name="message" rows="3" maxlength="2500" placeholder="Tell us what you have in mind."></textarea></div>
+        <div class="page-width">
+          <div class="section-heading"><div><p class="eyebrow">Your table, your choices</p><h2 id="contact-title">Plan your order.</h2></div><div class="planner-contact"><a href="mailto:order@degikitchen.com">order@degikitchen.com</a><a href="tel:+15736395967">573-639-5967</a></div></div>
+          <div class="planner-top"><ol class="checkout-steps" aria-label="Order progress"><li><button type="button" data-step="cart" aria-current="step"><span>1</span> Your cart</button></li><li><button type="button" data-step="details"><span>2</span> Date & details</button></li><li><button type="button" data-step="review"><span>3</span> Review & send</button></li></ol><button type="button" class="text-link" data-account-open data-planner-account>Sign in / Create account</button></div>
+          <div class="planner-layout">
+            <div class="planner-main">
+              <section data-order-step="cart" aria-labelledby="cart-title"><div class="planner-heading"><h3 id="cart-title" tabindex="-1">Your cart</h3><a class="text-link" href="#menu">Add more dishes <span class="icon icon-plus" aria-hidden="true"></span></a></div><div data-cart-items></div><p class="form-note">Portions and tray serving sizes are confirmed with your quote.</p><div class="planner-actions"><button type="button" class="button button-green" data-next-details>Date & details <span class="icon icon-arrow-right" aria-hidden="true"></span></button></div></section>
+              <section data-order-step="details" aria-labelledby="details-title" hidden><h3 id="details-title" tabindex="-1">Date & details</h3>
+                <form data-inquiry-form class="inquiry-form">
+                  <p hidden><label>Leave empty<input name="website" tabindex="-1" autocomplete="off"></label></p>
+                  <fieldset class="request-type"><legend class="sr-only">Request type</legend><label><input type="radio" name="requestType" value="order" checked><span>Family order</span></label><label><input type="radio" name="requestType" value="event"><span>Event catering</span></label></fieldset>
+                  <div class="form-grid">
+                    <div class="form-field"><label for="date">Date *</label><input id="date" name="date" type="date" required></div>
+                    <div class="form-field"><label for="time">Time (Eastern) *</label><input id="time" name="time" type="time" required></div>
+                    <div class="form-field"><label for="guests">Number of guests *</label><input id="guests" name="guests" type="number" min="1" max="10000" step="1" inputmode="numeric" required></div>
+                    <div class="form-field"><label for="event">Occasion (optional)</label><select id="event" name="event"><option value="">Select occasion</option><option>Family gathering</option><option>Office catering</option><option>Birthday</option><option>Wedding</option><option>Weekly meal prep</option><option>Other</option></select></div>
+                    <div class="form-field field-full"><label for="location">City or event location *</label><input id="location" name="location" autocomplete="address-level2" maxlength="160" required></div>
+                    <div class="form-field"><label for="name">Your name *</label><input id="name" name="name" autocomplete="name" required maxlength="120"></div>
+                    <div class="form-field"><label for="email">Email *</label><input id="email" name="email" type="email" autocomplete="email" required maxlength="254"></div>
+                    <div class="form-field field-full"><label for="phone">Phone (optional)</label><input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="40"></div>
+                    <div class="form-field field-full"><label for="message">Dietary needs or other details (optional)</label><textarea id="message" name="message" rows="3" maxlength="2500"></textarea></div>
+                  </div>
+                  <p class="form-note">Requested time only. The kitchen confirms availability.</p><div class="planner-actions"><button type="button" class="text-link" data-back-cart><span class="icon icon-back" aria-hidden="true"></span> Your cart</button><button type="submit" class="button button-green">Review request <span class="icon icon-arrow-right" aria-hidden="true"></span></button></div>
+                </form>
+              </section>
+              <section data-order-step="review" aria-labelledby="review-title" hidden><h3 id="review-title" tabindex="-1">Review your request</h3><div data-review-content></div><p class="form-note">This is a request for a personal quote, not a confirmed order. No payment is collected.</p><div class="planner-actions"><button type="button" class="text-link" data-back-details><span class="icon icon-back" aria-hidden="true"></span> Edit details</button><button type="button" class="button button-green" data-send-order>Send request <span class="icon icon-arrow-up-right" aria-hidden="true"></span></button></div></section>
+              <section data-order-step="success" aria-labelledby="success-title" hidden><p class="eyebrow" data-order-reference></p><h3 id="success-title" tabindex="-1">Request received.</h3><p class="form-note">We'll confirm your menu, portions, price, and availability personally.</p><pre class="order-text-summary" data-success-summary></pre><div class="planner-actions"><button type="button" class="text-link" data-download-order><span class="icon icon-download" aria-hidden="true"></span> Download summary</button><button type="button" class="button button-green" data-new-order>Start a new request</button></div><p class="form-note">Need to change a sent request? <a href="mailto:order@degikitchen.com" data-change-sent>Email the kitchen</a> with your request number.</p></section>
+              <p class="form-status" role="status" data-form-status></p>
+              <div class="request-ready" data-order-fallback hidden><a class="text-link" href="mailto:order@degikitchen.com" data-email-link>Open email draft <span class="icon icon-mail" aria-hidden="true"></span></a><a class="text-link" href="sms:+15736395967" data-sms-link>Open text message <span class="icon icon-message-circle" aria-hidden="true"></span></a></div>
             </div>
-            <button class="button button-green form-submit" type="submit"><span data-submit-label>Send Inquiry</span> <span class="icon icon-arrow-up-right" aria-hidden="true"></span></button>
-            <p class="form-note">We'll confirm your menu, price, and availability personally. This is an inquiry, not a confirmed order.</p>
-            <p class="form-note" role="status" aria-live="polite" data-form-status></p>
-            <details class="form-note"><summary>Inquiry privacy</summary><p>Your contact and order details are stored securely by Netlify and emailed to Degi Kitchen for handling your inquiry. Please do not include payment details.</p></details>
-            <div class="request-ready" data-request-ready hidden><p>Prefer another way to reach us?</p><a class="text-link" href="mailto:order@degikitchen.com" data-email-link>Open email draft <span class="icon icon-mail" aria-hidden="true"></span></a><a class="text-link" href="sms:+15736395967" data-sms-link>Open text message <span class="icon icon-message-circle" aria-hidden="true"></span></a><button class="text-link" type="button" data-copy-request>Copy request <span class="icon icon-copy" aria-hidden="true"></span></button><p class="form-note" aria-live="polite" data-copy-status></p><textarea aria-label="Your prepared request" rows="8" readonly data-request-preview hidden></textarea></div>
-          </form>
+            <aside class="cart-totals" aria-labelledby="totals-title"><h3 id="totals-title">At a glance</h3><dl data-cart-totals></dl><div class="quote-total"><span>Price</span><strong>Personal quote</strong></div><p class="form-note">Tray sizes and servings are counted separately.</p><details class="form-note"><summary>Order privacy</summary><p>Your request is stored by Netlify and emailed to Degi Kitchen. Signed-in customers can view their requests in their account. Your cart is saved on this device, without your contact details. Please do not include payment information.</p></details></aside>
+          </div>
+          <noscript><p>For an itemized request, email your dishes, rice and meat choices, quantities, date, and time to <a href="mailto:order@degikitchen.com">order@degikitchen.com</a>.</p></noscript>
         </div>
       </section>
+      <form name="degi-order-request" method="POST" action="/thank-you.html" data-netlify="true" netlify-honeypot="website" hidden>
+        <input name="form-name" value="degi-order-request"><input name="reference"><textarea name="order-items"></textarea><input name="total-quantities"><textarea name="date-and-event"></textarea><textarea name="customer"></textarea><input name="email" type="email"><textarea name="notes"></textarea><input name="price"><input name="subject"><input name="website">
+      </form>
     </main>
     <footer class="site-footer"><div class="page-width"><div class="footer-top"><a class="brand" href="#top" aria-label="Degi Kitchen home"><span class="brand-name">Degi Kitchen<span class="brand-dot">.</span></span><span class="brand-caption">Afghan food & hospitality</span></a><p>Family trays. Shared feasts.<br>Good food, together.</p><nav aria-label="Footer navigation"><a href="#menu">Our Menu</a><a href="#contact">Order & Inquire</a><a href="#area">Service Areas</a></nav></div><div class="footer-bottom"><p>&copy; <span data-year>2026</span> Degi Kitchen</p><p>Northern Virginia / Washington, DC / Maryland</p><details class="image-note"><summary>Image notes</summary><p>Kabab photography by <a href="https://www.pexels.com/photo/a-plate-with-chicken-skewers-and-a-bowl-of-salad-14774996/" target="_blank" rel="noopener noreferrer">Shameel mukkath / Pexels</a>, used under the <a href="https://www.pexels.com/license/" target="_blank" rel="noopener noreferrer">Pexels license</a>. Qabuli, mantoo, and bolani images are AI-generated illustrations. Images are representative, not photographs of Degi Kitchen customer orders. Actual preparation and presentation may vary.</p></details></div></div></footer>
     <nav class="mobile-contact" aria-label="Quick contact"><a href="tel:+15736395967"><span class="icon icon-phone" aria-hidden="true"></span>Call</a><a href="sms:+15736395967"><span class="icon icon-message-circle" aria-hidden="true"></span>Text</a><a href="#contact">Order & Inquire <span class="icon icon-arrow-up-right" aria-hidden="true"></span></a></nav>
@@ -231,8 +243,8 @@
         <header class="chat-header"><div><h2 id="chat-title">Degi Kitchen</h2><p>AI order assistant</p></div><button class="icon-button" type="button" title="Start a new chat" aria-label="Start a new chat" data-chat-reset><span class="icon icon-plus" aria-hidden="true"></span></button><button class="icon-button" type="button" title="Close chat" aria-label="Close chat" data-chat-close><span class="icon icon-x" aria-hidden="true"></span></button></header>
         <div class="chat-messages" role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions" tabindex="0" data-chat-messages></div>
         <p class="chat-status" role="status" data-chat-status></p>
-        <div class="chat-quick" data-chat-quick><button type="button" data-chat-prompt="What would you suggest for a family meal?">Family meal</button><button type="button" data-chat-prompt="Help me plan catering for an event.">Plan catering</button><button type="button" data-chat-prompt="Which areas do you serve?">Service areas</button></div>
-        <div class="chat-handoff"><button type="button" data-chat-review>Review inquiry <span class="icon icon-arrow-up-right" aria-hidden="true"></span></button><a href="sms:+15736395967" aria-label="Text Degi Kitchen" title="Text the kitchen"><span class="icon icon-message-circle" aria-hidden="true"></span></a><a href="tel:+15736395967" aria-label="Call Degi Kitchen" title="Call the kitchen"><span class="icon icon-phone" aria-hidden="true"></span></a></div>
+        <div class="chat-quick" data-chat-quick><button type="button" data-chat-prompt="Help me choose rice and meat for my order.">Rice & meat</button><button type="button" data-chat-prompt="Help me choose kababs and amounts.">Kababs</button><button type="button" data-chat-prompt="Help me plan catering for an event, one dish at a time.">Plan an event</button></div>
+        <div class="chat-handoff"><button type="button" data-chat-review>Review cart <span class="icon icon-arrow-up-right" aria-hidden="true"></span></button><a href="sms:+15736395967" aria-label="Text Degi Kitchen" title="Text the kitchen"><span class="icon icon-message-circle" aria-hidden="true"></span></a><a href="tel:+15736395967" aria-label="Call Degi Kitchen" title="Call the kitchen"><span class="icon icon-phone" aria-hidden="true"></span></a></div>
         <form class="chat-composer" data-chat-form><label class="sr-only" for="chat-message">Your message</label><textarea id="chat-message" rows="2" maxlength="1000" placeholder="What are you planning?" required></textarea><button type="submit" class="icon-button" title="Send message" aria-label="Send message"><span class="icon icon-arrow-right" aria-hidden="true"></span></button></form>
         <div class="chat-disclosure"><p>AI can make mistakes. The kitchen confirms all orders.</p><details><summary>Chat privacy</summary><p>Messages are processed by OpenAI through Netlify. Please do not share payment details or sensitive personal information. This page keeps the conversation in memory only; refreshing clears it. Your chat is not automatically sent to the kitchen.</p></details></div>
       </section>

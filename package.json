@@ -6,13 +6,17 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "test": "npm run build && node --test tests/*.test.mjs",
-    "dev": "python3 -m http.server 5173 --bind 127.0.0.1",
-    "start": "python3 -m http.server 5173 --bind 127.0.0.1"
+    "dev": "npm run build && python3 -m http.server 5173 --bind 127.0.0.1 --directory dist",
+    "start": "python3 -m http.server 5173 --bind 127.0.0.1 --directory dist"
   },
   "dependencies": {
+    "@netlify/blobs": "^11.0.3",
+    "@netlify/identity": "^2.0.0",
     "openai": "^7.12.1"
   },
   "devDependencies": {
-    "cheerio": "^1.2.0"
+    "cheerio": "^1.2.0",
+    "esbuild": "^0.28.2",
+    "lucide-static": "^1.43.0"
   }
 }
