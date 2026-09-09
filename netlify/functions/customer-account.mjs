@@ -16,6 +16,7 @@ export function createAccountHandler({ user = getUser, store = () => getStore({ 
       const { blobs } = await storage.list({ prefix });
       if (request.method === 'DELETE') {
         for (const blob of blobs) await storage.delete(blob.key);
+        await storage.delete(`customers/${customer.id}/avatar`);
         await deleteUser(customer.id);
         return json({ deleted: true });
       }

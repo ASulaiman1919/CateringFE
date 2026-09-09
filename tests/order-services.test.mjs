@@ -1,0 +1,91 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { orderDocument } from '../order-document.mjs';
+import { sendOrderEmails } from '../netlify/lib/order-email.mjs';
+import { createAddressHandler, addressResults } from '../netlify/functions/address-suggestions.mjs';
+import { createAvatarHandler } from '../netlify/functions/customer-avatar.mjs';
+import { createSummaryHandler } from '../netlify/functions/order-summary.mjs';
+import { createHash } from 'node:crypto';
+
+const record = { reference: 'DK-TEST', items: [{ name: 'Bolani', rice: '', meat: '', fillings: ['chives', 'potato'], size: '', unit: 'piece', quantity: 4 }, { name: 'Baklava', unit: 'pound', quantity: 1.25 }], details: { name: 'Test <Customer>', email: 'customer@example.com', phone: '202-555-0144', date: '2026-09-20', time: '17:30', address: { street: '123 Test Street', line2: 'Unit <2>', city: 'Fairfax', state: 'VA', zip: '22030' }, recipient: { name: 'Recipient', phone: '202-555-0155' }, notes: '<script>alert("XSS")</script>\nNo onions', guests: null } };
+const request = (path, body, method = 'POST') => new Request('https://degikitchen.com' + path, { method, headers: { origin: 'https://degikitchen.com', 'content-type': 'application/json' }, ...(body ? { body: JSON.stringify(body) } : {}) });
+test('receipt HTML escapes personal content, keeps item quantities and recipient clear', () => {
+  const html = orderDocument(record);
+  assert.match(html, /4 pieces/); assert.match(html, /1.25 lbs/);
+  assert.match(html, /Chives \+ Potatoes \(mixed filling\)/);
+  assert.match(html, /Test &lt;Customer&gt;/); assert.match(html, /Unit &lt;2&gt;/);
+  assert.doesNotMatch(html, /<script>/); assert.match(html, /&lt;script&gt;/);
+  assert.match(html, /DELIVERY RECIPIENT/); assert.match(html, /202-555-0155/);
+  assert.doesNotMatch(html, /null guests/); assert.match(html, /not yet a confirmed order/);
+});
+test('branded email batches owner and customer receipts, with correct replies and idempotency', async t => {
+  const previous = { key: process.env.RESEND_API_KEY, owner: process.env.ORDER_NOTIFICATION_EMAIL };
+  t.after(() => {
+    if (previous.key === undefined) delete process.env.RESEND_API_KEY; else process.env.RESEND_API_KEY = previous.key;
+    if (previous.owner === undefined) delete process.env.ORDER_NOTIFICATION_EMAIL; else process.env.ORDER_NOTIFICATION_EMAIL = previous.owner;
+  });
+  delete process.env.RESEND_API_KEY;
+  assert.equal(await sendOrderEmails(record), null);
+  process.env.RESEND_API_KEY = 'local-test-only'; process.env.ORDER_NOTIFICATION_EMAIL = 'owner@example.com';
+  const response = await sendOrderEmails(record, async (url, options) => {
+    assert.equal(url, 'https://api.resend.com/emails/batch');
+    assert.equal(options.headers['Idempotency-Key'], 'degi-order-DK-TEST');
+    const messages = JSON.parse(options.body);
+    assert.equal(messages.length, 2); assert.deepEqual(messages[0].to, ['owner@example.com']); assert.equal(messages[0].reply_to, 'customer@example.com');
+    assert.deepEqual(messages[1].to, ['customer@example.com']); assert.equal(messages[1].reply_to, 'order@degikitchen.com');
+    assert.match(messages[1].html, /Thank you/); assert.match(messages[0].text, /4 pieces \+ 1.25 lbs/);
+    return Response.json({ data: [{ id: 'owner-email' }, { id: 'customer-email' }] });
+  });
+  assert.equal(response.emailQueued, true);
+  await assert.rejects(sendOrderEmails(record, async () => Response.json({ error: 'quota' }, { status: 429 })));
+  await assert.rejects(sendOrderEmails(record, async () => Response.json({ data: [{ id: 'one-only' }] })));
+});
+test('address suggestions include only full regional addresses and deduplicate', async () => {
+  const properties = { countrycode: 'US', state: 'Virginia', city: 'Fairfax', street: 'Test Street', housenumber: '123', postcode: '22030' };
+  const feature = { properties };
+  assert.deepEqual(addressResults([feature, feature, { properties: { ...properties, postcode: '' } }, { properties: { ...properties, state: 'California' } }, { properties: { ...properties, housenumber: '' } }]), [{ street: '123 Test Street', city: 'Fairfax', state: 'VA', zip: '22030', line2: '', label: '123 Test Street, Fairfax, VA 22030' }]);
+  let searched;
+  const handler = createAddressHandler(async url => { searched = url; return Response.json({ features: [feature] }); });
+  assert.equal((await (await handler(request('/api/address-suggestions', { query: '123 Test Street' }))).json()).addresses.length, 1);
+  assert.equal(searched.searchParams.get('countrycode'), 'US');
+  assert.equal((await handler(new Request('https://degikitchen.com/api/address-suggestions', { method: 'POST' }))).status, 403);
+  const down = createAddressHandler(async () => { throw new Error('unavailable'); });
+  assert.equal((await (await down(request('/api/address-suggestions', { query: '123 Test Street' }))).json()).unavailable, true);
+});
+test('profile photos are authenticated, same-origin, bounded and private', async () => {
+  const records = new Map();
+  const store = () => ({ get: async key => records.get(key), set: async (key, bytes) => records.set(key, bytes), delete: async key => records.delete(key) });
+  const handler = createAvatarHandler({ user: async () => ({ id: 'own-profile' }), store });
+  const avatar = Buffer.alloc(24); avatar.write('RIFF'); avatar.write('WEBP', 8);
+  const upload = body => new Request('https://degikitchen.com/api/customer-avatar', { method: 'PUT', headers: { origin: 'https://degikitchen.com', 'content-type': 'image/webp' }, body });
+  assert.equal((await handler(upload(avatar))).status, 200); assert.equal(records.has('customers/own-profile/avatar'), true);
+  const response = await handler(new Request('https://degikitchen.com/api/customer-avatar?user=someone-else'));
+  assert.equal(response.headers.get('cache-control'), 'private, no-store'); assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+  assert.equal((await handler(upload(Buffer.from('<script>bad</script>')))).status, 400);
+  assert.equal((await handler(upload(Buffer.alloc(700001)))).status, 400);
+  assert.equal((await handler(new Request('https://degikitchen.com/api/customer-avatar', { method: 'DELETE' }))).status, 403);
+  assert.equal((await handler(request('/api/customer-avatar', null, 'DELETE'))).status, 200);
+  assert.equal(records.size, 0);
+  const anonymous = createAvatarHandler({ user: async () => null }); assert.equal((await anonymous(new Request('https://degikitchen.com/api/customer-avatar'))).status, 401);
+});
+test('direct receipt downloads are private and require a fresh secret or the owning account', async () => {
+  const records = new Map();
+  const requestId = '11111111-2222-4333-8444-555555555555';
+  const createdAt = '2026-09-09T12:00:00.000Z';
+  const saved = { ...record, reference: 'DK-111111112222', createdAt, status: 'received' };
+  records.set('requests/' + createHash('sha256').update(requestId).digest('hex'), saved);
+  records.set(`customers/owner/orders/${createdAt}-${saved.reference}`, saved);
+  const store = () => ({ get: async key => records.get(key) || null });
+  const post = fields => new Request('https://degikitchen.com/api/order-summary', { method: 'POST', headers: { origin: 'https://degikitchen.com', 'content-type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(fields) });
+  const handler = createSummaryHandler({ user: async () => null, store, now: () => Date.parse(createdAt) + 3600000 });
+  const response = await handler(post({ requestId }));
+  assert.equal(response.status, 200); assert.equal(response.headers.get('content-disposition'), 'attachment; filename="DK-111111112222.html"');
+  assert.equal(response.headers.get('cache-control'), 'private, no-store'); assert.match(await response.text(), /4 pieces/);
+  assert.equal((await handler(new Request('https://degikitchen.com/api/order-summary?requestId=' + requestId))).status, 403);
+  const history = { reference: saved.reference, createdAt };
+  assert.equal((await handler(post(history))).status, 401);
+  const other = createSummaryHandler({ user: async () => ({ id: 'other' }), store }); assert.equal((await other(post(history))).status, 404);
+  const owner = createSummaryHandler({ user: async () => ({ id: 'owner' }), store }); assert.equal((await owner(post(history))).status, 200);
+  const expired = createSummaryHandler({ store, now: () => Date.parse(createdAt) + 7200001 }); assert.equal((await expired(post({ requestId }))).status, 410);
+  assert.equal((await owner(post({ reference: '../other', createdAt }))).status, 400);
+});

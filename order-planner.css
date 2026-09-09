@@ -5,6 +5,8 @@
 .icon-trash { --icon: url('assets/icons/trash-2.svg'); }
 .icon-download { --icon: url('assets/icons/download.svg'); }
 .icon-back { --icon: url('assets/icons/arrow-left.svg'); }
+.icon-flower { --icon: url('assets/icons/flower-2.svg'); }
+.icon-camera { --icon: url('assets/icons/camera.svg'); }
 .header-tools { display: flex; gap: 8px; margin-left: 20px; }
 .cart-header-button { position: relative; }
 .cart-badge { position: absolute; top: -5px; right: -5px; min-width: 21px; height: 21px; padding: 0 4px; display: grid; place-items: center; border-radius: 12px; background: var(--red); color: white; font-size: 10px; font-weight: 600; }
@@ -29,6 +31,7 @@
 .planner-actions .text-link { gap: 8px; font-size: 13px; }
 .form-status { color: var(--red); font-size: 14px; line-height: 1.6; }
 .form-status:not(:empty) { margin-top: 20px; }
+.form-status.is-success { color: var(--green); }
 .cart-empty { padding: 40px 0; border-block: 1px solid var(--line); margin-bottom: 20px; }
 .cart-empty p { margin: 10px 0; font-size: 14px; color: var(--muted); }
 .cart-row { display: grid; grid-template-columns: 26px minmax(0, 1fr); column-gap: 12px; padding: 23px 0; border-top: 1px solid var(--line); }
@@ -47,6 +50,7 @@
 .cart-totals dl { margin: 0 0 20px; }
 .cart-totals dl > div { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; padding: 9px 0; font-size: 14px; }
 .cart-totals dt { color: var(--muted); }
+.cart-totals dt::first-letter { text-transform: uppercase; }
 .cart-totals dd { margin: 0; font-weight: 600; }
 .quote-total { display: flex; flex-direction: column; gap: 5px; border-top: 1px solid var(--line); padding-top: 18px; font-size: 13px; }
 .quote-total strong { color: var(--green); font-size: 18px; }
@@ -93,6 +97,53 @@ body:has(.order-dialog[open]) { overflow: hidden; }
 [data-member-email] { margin-bottom: 18px; font-size: 14px; overflow-wrap: anywhere; }
 [data-order-step] h3 { scroll-margin-top: 110px; }
 [data-order-step='success'] .order-text-summary { border-block: 1px solid var(--line); padding-block: 20px; }
+.dish-description { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+.single-unit { height: 48px; display: flex; align-items: center; text-transform: capitalize; font-size: 16px; }
+.checkout-fieldset { border: 0; border-top: 1px solid var(--line); padding: 22px 0 0; margin: 28px 0 0; min-width: 0; }
+.checkout-fieldset legend { font: 600 17px var(--body); padding-right: 15px; }
+.checkout-fieldset .form-grid { margin-top: 6px; }
+.recipient-toggle { display: flex; align-items: center; gap: 10px; font-size: 14px; margin: 22px 0; cursor: pointer; }
+.recipient-toggle input { width: 18px; height: 18px; padding: 0; accent-color: var(--green); }
+[data-account-contact-copy] { overflow-wrap: anywhere; font-size: 14px; line-height: 1.8; }
+[data-account-contact-copy] p:first-child { font-weight: 600; font-size: 16px; }
+.address-state-zip { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; min-width: 0; }
+.address-search { position: relative; }
+.address-options { position: absolute; top: 80px; left: 0; right: 0; z-index: 10; margin: 0; padding: 4px; list-style: none; max-height: 265px; overflow-y: auto; background: white; border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 8px 22px #102f2922; }
+.address-options li { padding: 12px; font-size: 14px; cursor: pointer; overflow-wrap: anywhere; }
+.address-options li:hover, .address-options [aria-selected='true'] { background: var(--sage); }
+.address-attribution { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.address-attribution a { text-decoration: underline; }
+.cart-row-copy .cart-needs-review { color: var(--red); }
+.recipient-heading { margin-top: 20px; }
+.thank-you-flower { width: 64px; height: 64px; color: var(--red); margin-bottom: 24px; animation: flower-bloom .8s ease-out both; }
+.success-message { max-width: 460px; margin: 14px 0; font-size: 17px; }
+.success-details { margin: 32px 0 24px; border-block: 1px solid var(--line); font-size: 14px; }
+.success-details summary { cursor: pointer; padding: 16px 0; }
+[data-order-step='success'] h3 { overflow-wrap: anywhere; }
+@keyframes flower-bloom { from { opacity: 0; transform: scale(.75) rotate(-15deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+.customer-menu { position: fixed; inset: auto; margin: 0; padding: 22px; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: white; box-shadow: 0 14px 48px #102f2929; }
+.customer-menu::backdrop { background: transparent; }
+.profile-menu-heading { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 14px; align-items: center; }
+.profile-menu-heading h2 { font: 600 17px/1.4 var(--body); overflow-wrap: anywhere; }
+.profile-menu-heading p { font-size: 13px; margin-top: 3px; color: var(--muted); overflow-wrap: anywhere; }
+.profile-avatar { width: 54px; height: 54px; display: grid; place-items: center; position: relative; background: var(--sage); border-radius: 50%; overflow: hidden; color: var(--green); }
+.profile-avatar img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
+.profile-menu-actions { margin: 20px 0 0; border-top: 1px solid var(--line); padding-top: 10px; }
+.profile-menu-actions button { display: flex; gap: 12px; align-items: center; width: 100%; min-height: 44px; padding: 8px 4px; border: 0; text-align: left; background: transparent; color: var(--ink); font-size: 14px; }
+.profile-menu-actions button:hover { color: var(--green); background: var(--sage); }
+.profile-menu-actions .icon { width: 18px; height: 18px; }
+.profile-signout { border: 0; border-top: 1px solid var(--line); width: 100%; padding: 14px 4px 0; margin-top: 12px; background: transparent; color: var(--red); text-align: left; font-size: 14px; min-height: 44px; }
+[data-popover-editor] { padding-block: 12px; }
+.customer-menu .form-field { margin-block: 14px; }
+.customer-menu .text-link { font-size: 13px; margin-top: 12px; }
+.customer-menu .button { width: 100%; }
+.profile-photo-actions { display: flex; align-items: center; gap: 14px; }
+.profile-photo-actions label { cursor: pointer; }
+#profile-photo-input { width: 1px; height: 1px; min-width: 0; padding: 0; border: 0; }
+.account-thumbnail { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+.has-avatar > .icon { display: none; }
+.account-order > .text-link { margin-right: 24px; }
+@media (prefers-reduced-motion: reduce) { .thank-you-flower { animation: none; } }
 @media (max-width: 1099px) {
   .planner-layout { grid-template-columns: minmax(0, 1fr) 240px; gap: 28px; }
   .checkout-steps { gap: 14px; }

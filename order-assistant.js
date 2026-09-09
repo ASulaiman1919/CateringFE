@@ -144,6 +144,7 @@
   });
   quick.querySelectorAll("button").forEach((button) => button.addEventListener("click", () => send(button.dataset.chatPrompt)));
   document.addEventListener("degi:selection-change", syncSuggestions);
+  document.addEventListener('degi:order-complete', () => { reset(); close(false); });
   panel.addEventListener("keydown", (event) => {
     if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); close(); }
   });

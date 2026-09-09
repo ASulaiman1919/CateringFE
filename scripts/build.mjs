@@ -20,7 +20,7 @@ await mkdir("dist");
 for (const path of ["index.html", "thank-you.html", "styles.css", "script.js", "order-assistant.js", "order-assistant.css", "order-planner.css", "favicon.svg", "assets"]) {
   await cp(path, "dist/" + path, { recursive: true });
 }
-for (const icon of ['user-round', 'shopping-bag', 'minus', 'pencil', 'trash-2', 'download', 'arrow-left']) {
+for (const icon of ['user-round', 'shopping-bag', 'minus', 'pencil', 'trash-2', 'download', 'arrow-left', 'flower-2', 'camera']) {
   await cp(`node_modules/lucide-static/icons/${icon}.svg`, `dist/assets/icons/${icon}.svg`);
 }
 await build({ entryPoints: ['order-planner.js', 'customer-account.js'], bundle: true, outdir: 'dist', platform: 'browser', format: 'iife', target: ['es2022'], minify: true });

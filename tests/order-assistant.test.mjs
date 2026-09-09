@@ -5,7 +5,7 @@ import { load } from "cheerio";
 import { createHandler, normalizeAnswer, validMessages, config } from "../netlify/functions/order-assistant.mjs";
 
 const message = { role: "user", content: "A family meal for 12 in Fairfax" };
-const answer = { reply: "How about Qabuli Palaw with Lamb? The kitchen will confirm your quote.", suggestions: ["Qabuli Palaw with Lamb"], itemDrafts: [], draft: { guests: 12, date: null, time: null, city: "Fairfax", requestType: "order" } };
+const answer = { reply: "How about Qabuli rice with lamb? The kitchen will confirm your quote.", suggestions: ["Rice & Meat"], itemDrafts: [], draft: { guests: 12, date: null, time: null, city: "Fairfax", requestType: "order" } };
 function request(body = { messages: [message] }, options = {}) {
   return new Request("https://degikitchen.com/api/order-assistant", {
     method: "POST", headers: { origin: "https://degikitchen.com", "content-type": "application/json" }, body: JSON.stringify(body), ...options
@@ -18,7 +18,7 @@ test("uses actual menu and returns a validated draft", async () => {
   const response = await handler(request());
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), answer);
-  assert.match(prompt, /Qabuli Palaw with Lamb/);
+  assert.match(prompt, /Rice & Meat/);
   assert.match(prompt, /Sabzi Challow contains meat/);
   assert.match(prompt, /Never promise free delivery/);
   assert.match(prompt, /not a human/);
@@ -75,8 +75,8 @@ test("rate limiting covers both custom and default function routes", () => {
 test("public build excludes server code and private outputs; all menu dishes remain", async () => {
   const $ = load(await readFile("dist/index.html", "utf8"));
   const catalog = JSON.parse(await readFile("netlify/data/menu.json", "utf8"));
-  assert.equal($("[data-dish]").length, 30);
-  assert.equal(catalog.length, 30);
+  assert.equal($("[data-dish]").length, 28);
+  assert.equal(catalog.length, 28);
   assert.equal($("[data-order-helper][hidden]").length, 1);
   assert.equal($(".image-note").text().includes("AI-generated"), true);
   assert.equal($(".favorite-image img").get().some((img) => $(img).attr("src").includes("qabuli-original")), true);
