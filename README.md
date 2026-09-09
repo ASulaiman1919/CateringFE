@@ -19,14 +19,43 @@ The site uses a modern Afghan palette of deep green, white, charcoal, and restra
 All 30 dishes remain in the HTML. JavaScript adds category tabs and a selection list;
 without JavaScript, the complete menu remains available.
 
-The inquiry form prepares an email to `order@degikitchen.com`. It does not submit
-to a server or send automatically. The customer reviews and sends the draft in their
-email app. After preparing a request, text-message and copy options are also available.
+The inquiry form submits to Netlify Forms (`degi-inquiry`). Configure its email
+notification to the owner's personal inbox in Netlify; the recipient isn't public
+in the HTML. Submissions are also retained in the site's Forms dashboard. The
+`order@degikitchen.com` link remains for direct email, with current DNS forwarding
+to the owner's Gmail. Gmail can hide duplicate self-sent forwarding tests.
+Email draft, text-message, and copy options remain as fallbacks.
 Phone and text links use separate actions. No payment is collected on the site.
 
-Food imagery is generated and disclosed in the footer's Image notes. Original PNGs
-remain in the owner's Codex folder; optimized WebP files are served from this project.
+Food imagery combines licensed free kabab photography and disclosed generated images.
+Original generated PNGs remain in the owner's Codex folder; optimized files are served from this project.
 See `assets/editorial/README.md` for source details and design references.
+
+## Order Assistant
+
+The bottom-right assistant uses a Netlify Function and GPT-4.1 mini through the host's
+AI Gateway. Netlify injects server-side credentials on eligible credit-based plans.
+No API keys appear in public files. It uses the existing hosting credits; billing,
+automatic recharge, and paid subscriptions have not been enabled or changed.
+
+The build extracts all menu names and descriptions from `index.html` for the assistant.
+The assistant suggests dishes but only a visitor's explicit add action selects one.
+Review inquiry copies stated date, guest count, and city into empty form fields and
+does not replace existing notes or submit anything. The visitor must press Send Inquiry.
+Pricing, availability, allergens,
+and arrangements require human confirmation. Chat is held in browser memory only,
+not local storage; messages are processed by OpenAI via Netlify, disclosed in the widget.
+No visitor chat content is written to application logs. Provider retention policies
+still apply. A timeout or AI outage leaves the normal inquiry/call/text paths available.
+
+Requests are limited to 10 per minute per IP/domain by Netlify. History, message size,
+output tokens, and calls per browser conversation are bounded. This is not a global
+spending cap; monitor hosting credits in Netlify. `OPENAI_API_KEY` / `OPENAI_BASE_URL`
+may be supplied server-side if the host's gateway is unavailable. Never put keys here.
+
+Run `npm test` for validation and safety checks, and `npm run build` for a clean public
+`dist/` directory. Netlify uses `netlify.toml` to deploy that directory and the function.
+Private outputs, working files, and function source are not part of the public build.
 
 ## Open In VS Code
 

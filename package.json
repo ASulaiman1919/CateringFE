@@ -4,7 +4,15 @@
   "private": true,
   "description": "Static website for Degi Kitchen catering.",
   "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "npm run build && node --test tests/*.test.mjs",
     "dev": "python3 -m http.server 5173 --bind 127.0.0.1",
     "start": "python3 -m http.server 5173 --bind 127.0.0.1"
+  },
+  "dependencies": {
+    "openai": "^7.12.1"
+  },
+  "devDependencies": {
+    "cheerio": "^1.2.0"
   }
 }

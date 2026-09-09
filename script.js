@@ -9,6 +9,8 @@ const selectedDishes = new Set();
 const orderEmail = "order@degikitchen.com";
 const orderPhone = "+15736395967";
 let preparedBody = "";
+let inquiryPending = false;
+let submittedInquiry = "";
 document.documentElement.classList.add("js-ready");
 
 function closeNav(returnFocus = false) {
@@ -144,6 +146,7 @@ function updateSelection() {
   });
   document.querySelector("[data-selection-status]").textContent = selectedDishes.size + (selectedDishes.size === 1 ? " dish" : " dishes") + " selected for your request.";
   refreshPreparedRequest();
+  document.dispatchEvent(new Event("degi:selection-change"));
 }
 dishButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -196,6 +199,10 @@ function buildRequest() {
 function refreshPreparedRequest() {
   const request = buildRequest();
   preparedBody = request.body;
+  form.elements["menu-choices"].value = Array.from(selectedDishes).join(", ");
+  const submit = document.querySelector(".form-submit");
+  submit.disabled = inquiryPending || preparedBody === submittedInquiry;
+  document.querySelector("[data-submit-label]").textContent = inquiryPending ? "Sending..." : preparedBody === submittedInquiry ? "Inquiry Sent" : "Send Inquiry";
   document.querySelector("[data-email-link]").href = "mailto:" + orderEmail + "?subject=" + encodeURIComponent(request.subject) + "&body=" + encodeURIComponent(request.body);
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   document.querySelector("[data-sms-link]").href = "sms:" + orderPhone + (isIOS ? "&" : "?") + "body=" + encodeURIComponent(request.body);
@@ -204,12 +211,32 @@ function refreshPreparedRequest() {
 }
 form.addEventListener("input", refreshPreparedRequest);
 form.addEventListener("change", refreshPreparedRequest);
-form.addEventListener("submit", (event) => {
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
-  if (!form.reportValidity()) return;
+  if (inquiryPending || !form.reportValidity()) return;
   refreshPreparedRequest();
+  if (preparedBody === submittedInquiry) return;
+  const sendingBody = preparedBody;
+  const body = new URLSearchParams(new FormData(form)).toString();
+  const status = document.querySelector("[data-form-status]");
+  inquiryPending = true;
+  refreshPreparedRequest();
+  status.textContent = "Sending your inquiry...";
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20000);
+  try {
+    const response = await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body, signal: controller.signal });
+    if (!response.ok) throw new Error("Submission failed");
+    submittedInquiry = sendingBody;
+    status.textContent = "Thank you. Your inquiry has been received. We'll follow up to confirm your menu, price, and availability. Your order is not yet confirmed.";
+  } catch {
+    status.textContent = "We couldn't confirm that your inquiry was received. Please text or call 573-639-5967, or use the email draft below. Your details are still here.";
+  } finally {
+    clearTimeout(timeout);
+    inquiryPending = false;
+    refreshPreparedRequest();
+  }
   document.querySelector("[data-request-ready]").hidden = false;
-  document.querySelector("[data-email-link]").click();
 });
 document.querySelector("[data-copy-request]").addEventListener("click", async () => {
   refreshPreparedRequest();
@@ -227,4 +254,3 @@ document.querySelector("[data-copy-request]").addEventListener("click", async ()
   }
 });
 refreshPreparedRequest();
-document.querySelector(".form-submit").disabled = false;

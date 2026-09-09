@@ -125,7 +125,7 @@ p + p { margin-top: 18px; }
 .favorites-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
 .favorite-image { display: block; aspect-ratio: 1.15; overflow: hidden; background: var(--sage); }
 .favorite-image img { height: 100%; width: 100%; object-fit: cover; transition: transform 350ms ease; }
-.favorite:first-child .favorite-image img { object-position: 95% center; }
+.favorite:first-child .favorite-image img { object-position: center 60%; }
 .favorite-image:hover img { transform: scale(1.025); }
 .favorite-copy { margin-top: 24px; display: flex; justify-content: space-between; gap: 14px; align-items: center; }
 .favorite-copy .eyebrow { margin-bottom: 9px; font-size: 10px; }
