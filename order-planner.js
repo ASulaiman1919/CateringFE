@@ -285,6 +285,9 @@ $('[data-download-order]').addEventListener('click', () => {
 window.DegiOrder = {
   get items() { return cart.map(item => ({ ...item })); },
   get catalog() { return catalog.map(dish => ({ name: dish.name })); },
+  describeProposal(item) {
+    return [itemTitle(item), itemOptions(item), item.quantity && Object.hasOwn(UNITS, item.unit) ? amountLabel(item.quantity, item.unit) : ''].filter(Boolean).join(' / ');
+  },
   configure,
   showCart,
   applyDraft(draft) {

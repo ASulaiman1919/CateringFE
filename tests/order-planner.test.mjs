@@ -105,3 +105,10 @@ test('AI item drafts cannot introduce unknown dishes or unsupported units, meat,
   assert.deepEqual(result.itemDrafts, [{ name: rice.name, rice: 'qabuli', meat: null, unit: null, quantity: null }]);
   assert.equal(result.draft.time, null);
 });
+test('explicit AI item drafts take priority over unrelated suggestions and retain different rice variants', () => {
+  const result = normalizeAnswer({ reply: 'Review your choices below.', suggestions: ['Chicken Kabab'], itemDrafts: [{ ...rice, quantity: 8 }, { ...rice, rice: 'white', meat: 'beef', quantity: 4 }], draft: {} });
+  assert.deepEqual(result.suggestions, [rice.name]);
+  assert.equal(result.itemDrafts.length, 2);
+  assert.equal(result.itemDrafts[1].meat, 'beef');
+  assert.equal(result.itemDrafts[1].quantity, 4);
+});

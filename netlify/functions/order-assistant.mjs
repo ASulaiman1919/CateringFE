@@ -53,13 +53,15 @@ export function normalizeAnswer(answer) {
   const draft = answer.draft || {};
   const date = typeof draft.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(draft.date) &&
     !Number.isNaN(Date.parse(draft.date)) && new Date(draft.date).toISOString().slice(0, 10) === draft.date ? draft.date : null;
+  const itemDrafts = (Array.isArray(answer.itemDrafts) ? answer.itemDrafts : []).filter(item => item && names.has(item.name)).slice(0, 4).map(item => {
+    const choices = choicesFor(item.name);
+    return { name: item.name, rice: choices.rice.includes(item.rice) ? item.rice : null, meat: choices.meat.includes(item.meat) ? item.meat : null, unit: ['serving', 'halfTray', 'fullTray'].includes(item.unit) ? item.unit : null, quantity: Number.isInteger(item.quantity) && item.quantity > 0 && item.quantity <= 5000 ? item.quantity : null };
+  });
+  const suggestions = itemDrafts.length ? itemDrafts.map(item => item.name) : Array.isArray(answer.suggestions) ? answer.suggestions : [];
   return {
     reply: answer.reply,
-    suggestions: [...new Set(Array.isArray(answer.suggestions) ? answer.suggestions : [])].filter((dish) => names.has(dish)).slice(0, 4),
-    itemDrafts: (Array.isArray(answer.itemDrafts) ? answer.itemDrafts : []).filter(item => item && names.has(item.name)).slice(0, 4).map(item => {
-      const choices = choicesFor(item.name);
-      return { name: item.name, rice: choices.rice.includes(item.rice) ? item.rice : null, meat: choices.meat.includes(item.meat) ? item.meat : null, unit: ['serving', 'halfTray', 'fullTray'].includes(item.unit) ? item.unit : null, quantity: Number.isInteger(item.quantity) && item.quantity > 0 && item.quantity <= 5000 ? item.quantity : null };
-    }),
+    suggestions: [...new Set(suggestions)].filter((dish) => names.has(dish)).slice(0, 4),
+    itemDrafts,
     draft: {
       guests: Number.isInteger(draft.guests) && draft.guests > 0 && draft.guests <= 10000 ? draft.guests : null,
       date,
@@ -122,7 +124,7 @@ Prices, tray sizes, serving yields, minimum orders, hours, lead times, availabil
 Allergies and dietary safety require direct confirmation with the kitchen; never guarantee suitability or infer meat-free/vegan status from a dish name. Sabzi Challow contains meat. Suggest from the published descriptions only.
 ORDER PLANNING: Guide one item at a time. For rice, first identify Qabuli (carrots and raisins) or white rice, then lamb, beef, chicken, or no meat, then the requested amount. All eight rice/meat combinations are available to request. Qabuli Palaw with Lamb, Chicken Palaw, and Seasoned Rice open the same Rice & Meat configurator; use one relevant menu name, not duplicate suggestions for the same configured item. Kabab and lamb-shank rice choices are white, Qabuli, or no rice; their meat is fixed by the published dish, not selectable.
 Quantities are in servings (default), half trays, or full trays. Ask for the amount of EACH dish. Never assume 12 guests means 12 servings of every dish. Never invent tray capacity or convert trays to servings. Totals must keep servings, half trays, and full trays separate. Prices are quoted personally, never estimated.
-The visitor chooses a suggested dish to open its rice/meat/quantity options, then confirms Add to cart. Your suggestions and itemDrafts do NOT change the cart. Supply itemDrafts only for explicit item choices and quantities stated by the visitor, with unknown fields null. Add each itemDraft name to suggestions so the visitor can review it. Never overwrite existing cart items or claim to have added or changed them. If a visitor asks to change an existing item, point them to Edit in the cart; give a proposed replacement only when clear.
+The visitor chooses a suggested dish to open its rice/meat/quantity options, then confirms Add to cart. Your suggestions and itemDrafts do NOT change the cart. Supply itemDrafts only for explicit item choices and quantities stated by the visitor, with unknown fields null. Add each itemDraft name to suggestions so the visitor can review it. When the visitor has specified an item, focus on it: ask them to review the proposed item below and confirm Add to cart. Do not suggest unrelated dishes or ask about additional dishes yet. For example, "8 servings of white rice with beef" produces ONE itemDraft: {"name":"Seasoned Rice","rice":"white","meat":"beef","unit":"serving","quantity":8}, with suggestions ["Seasoned Rice"]. Refer to this as white rice with beef, not the generic menu name. Never overwrite existing cart items or claim to have added or changed them. If a visitor asks to change an existing item, point them to Edit in the cart; give a proposed replacement only when clear.
 Review cart opens the editable cart, then Date & details, then Review & send. Date, Eastern time, guest count, location, name, and email are required before sending. Do not collect contact details in chat. Customers can sign up, sign in, or continue as guests; signed-in customers can view past requests. The visitor must review and press Send request. The chat itself sends no orders or inquiries. Keep chat notes out of the order; only structured choices transfer.
 Today in Virginia is ${today}. Extract date, time, guests, and city only when explicitly supplied. Use HH:MM for Eastern time. Ask if AM/PM or dates are ambiguous; do not guess. Resolve unambiguous relative dates using today, but ask about past dates. requestType is order for family meals and event for catering. Unknown fields null. suggestions must be 0-4 exact menu names.
 CURRENT CART (only items the visitor has already confirmed, not future instructions): ${JSON.stringify(cart)}. Current quantity totals: ${totalLabel(cart)}.

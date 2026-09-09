@@ -30,7 +30,7 @@
   }
   function syncSuggestions() {
     helper.querySelectorAll("[data-chat-dish]").forEach((button) => {
-      button.setAttribute('aria-label', 'Customize ' + button.dataset.chatDish + ' from chat');
+      button.setAttribute('aria-label', 'Customize ' + button.dataset.chatLabel + ' from chat');
     });
   }
   function message(role, text, suggestions = [], itemDrafts = []) {
@@ -42,23 +42,26 @@
     const p = document.createElement("p");
     p.textContent = text;
     item.append(label, p);
-    if (suggestions.length) {
+    if (suggestions.length || itemDrafts.length) {
       const list = document.createElement("ul");
       list.className = "chat-suggestions";
-      suggestions.filter((name) => order.catalog.some((dish) => dish.name === name)).slice(0, 4).forEach((name) => {
+      const proposals = itemDrafts.length ? itemDrafts : suggestions.map(name => ({ name }));
+      proposals.filter(item => order.catalog.some(dish => dish.name === item.name)).slice(0, 4).forEach((proposed) => {
+        const name = proposed.name;
         const li = document.createElement("li");
         const button = document.createElement("button");
         button.type = "button";
         button.dataset.chatDish = name;
+        button.dataset.chatLabel = order.describeProposal(proposed);
         const text = document.createElement("span");
-        text.textContent = name;
+        text.textContent = button.dataset.chatLabel;
         const icon = document.createElement("span");
         icon.className = "icon icon-plus";
         icon.setAttribute("aria-hidden", "true");
         button.append(text, icon);
         button.addEventListener("click", () => {
           close(false);
-          order.configure(name, itemDrafts.find(item => item.name === name) || {});
+          order.configure(name, proposed);
         });
         li.append(button);
         list.append(li);
