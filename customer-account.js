@@ -203,14 +203,23 @@ onAuthChange((event, user) => {
   applyUser(user).then(() => { if (event === 'recovery') { openAccount(); resetPasswordView(); } });
 });
 window.DegiAccount = { get user() { return currentUser; }, open: openAccount, refreshHistory };
-window.DegiAccount.ready = (async () => {
+let processingCallback = false;
+async function processAccountLink() {
+  if (processingCallback) return;
+  processingCallback = true;
   try {
     const callback = await handleAuthCallback();
     await applyUser(await getUser());
     if (callback) {
       openAccount();
       if (callback.type === 'recovery') resetPasswordView();
-      else status.textContent = 'Your email is verified and you are signed in.';
+      else status.textContent = callback.user ? 'Your email is verified and you are signed in.' : 'Please sign in to finish accessing your account.';
     }
   } catch { openAccount(); status.textContent = 'This account link is invalid or expired. Sign in or request a new password reset.'; }
-})();
+  finally { processingCallback = false; }
+}
+window.DegiAccount.ready = processAccountLink();
+window.addEventListener('hashchange', () => {
+  const params = new URLSearchParams(location.hash.slice(1));
+  if (['confirmation_token', 'recovery_token', 'access_token', 'invite_token', 'email_change_token'].some(key => params.has(key))) processAccountLink();
+});
