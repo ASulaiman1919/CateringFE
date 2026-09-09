@@ -74,7 +74,7 @@ async function readBody(request) {
 export function createHandler(complete = async (messages) => {
   const client = new OpenAI({ timeout: 20000, maxRetries: 0 });
   const completion = await client.chat.completions.create({
-    model: "gpt-4.1-mini-2025-04-14", messages, temperature: 0.3,
+    model: "gpt-4.1-mini", messages, temperature: 0.3,
     max_completion_tokens: 550, store: false,
     response_format: { type: "json_schema", json_schema: { name: "order_help", strict: true, schema } }
   });
@@ -109,8 +109,9 @@ Today's date in Virginia is ${today}. Extract draft fields only when the visitor
 PUBLISHED MENU: ${JSON.stringify(menu)}`;
     try {
       return json(normalizeAnswer(await complete([{ role: "system", content: instruction }, ...messages])));
-    } catch {
-      // Never log visitor messages or provider credentials.
+    } catch (error) {
+      // Keep diagnostics useful without logging visitor messages or provider details.
+      console.error("Order assistant request failed", { status: Number.isInteger(error?.status) ? error.status : null });
       return json({ error: "The AI assistant is unavailable right now. You can still review your inquiry or contact the kitchen directly." }, 503);
     }
   };
